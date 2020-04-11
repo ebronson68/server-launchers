@@ -1,0 +1,41 @@
+#!/bin/bash
+DIRECTORY="/home/steamcmd/7dtd_server"
+STEAM_DIRECTORY="/home/steamcmd"
+SERVICE="7dtd"
+LAUNCHER="startserver.sh"
+USERNAME="steamcmd"
+
+if [[ ! $(screen -list | grep -E "*No Sockets found*") ]]; then
+        STATUS="on"
+else
+        STATUS="off"
+fi
+
+if [[ $1 == start ]] ; then
+    if [[ $STATUS == "on" ]] ; then
+            echo "$SERVICE server is already running"
+    else
+            screen -dmS $SERVICE $DIRECTORY/$LAUNCHER -logfile $DIRECTORY/logs/output.log -configfile=$DIRECTORY/serverconfig.xml -dedicated
+    fi
+elif [[ $1 == stop ]] ; then
+	if [[ $STATUS == "on" ]] ; then
+		screen -XS $SERVICE quit
+	else
+		echo "$SERVICE server is not running"
+	fi
+elif [[ $1 == attach ]] ; then
+    if [[ $STATUS == "on" ]] ; then
+		screen -r $SERVICE
+    else
+        echo "$SERVICE server is not running"
+    fi
+elif [[ $1 == update ]] || [[ $1 == install ]]; then
+    if [[ $STATUS == "on" ]] ; then
+		echo "$SERVICE server is currently running. Run '$SERVICE stop' to stop the server before running the update"
+    else
+		$STEAM_DIRECTORY/steamcmd.sh +runscript $DIRECTORY/update_7dtd.txt
+	fi
+elif [[ $1 == status ]] ; then
+        systemctl status $SERVICE --no-pager
+fi
+

@@ -1,0 +1,20 @@
+[Unit]
+Description=server daemon for seven days to die
+
+Wants=network.target
+After=network.target
+
+[Service]
+Type=oneshot
+User=steamcmd
+WorkingDirectory=/home/steamcmd/7dtd_server/
+#Group=minecraft
+ExecStart=/usr/local/bin/7dtd start
+ExecStop=/usr/local/bin/7dtd stop
+StandardOutput=syslog
+StandardError=syslog
+RemainAfterExit=true
+#Restart=always
+
+[Install]
+WantedBy=multi-user.target
