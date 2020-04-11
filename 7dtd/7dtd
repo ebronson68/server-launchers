@@ -15,7 +15,7 @@ if [[ $1 == start ]] ; then
     if [[ $STATUS == "on" ]] ; then
             echo "$SERVICE server is already running"
     else
-            screen -dmS $SERVICE $DIRECTORY/$LAUNCHER -logfile $DIRECTORY/logs/output.log -configfile=$DIRECTORY/serverconfig.xml -dedicated
+            /usr/bin/su-exec $USERNAME /bin/bash -c "screen -dmS $SERVICE $DIRECTORY/$LAUNCHER -logfile $DIRECTORY/logs/output.log -configfile=$DIRECTORY/serverconfig.xml -dedicated"
     fi
 elif [[ $1 == stop ]] ; then
 	if [[ $STATUS == "on" ]] ; then
@@ -25,7 +25,7 @@ elif [[ $1 == stop ]] ; then
 	fi
 elif [[ $1 == attach ]] ; then
     if [[ $STATUS == "on" ]] ; then
-		screen -r $SERVICE
+		/usr/bin/su-exec $USERNAME /bin/bash -c "screen -r $SERVICE"
     else
         echo "$SERVICE server is not running"
     fi
