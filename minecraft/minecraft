@@ -1,0 +1,54 @@
+#!/bin/bash
+DIRECTORY="/home/minecraft"
+SERVICE="minecraft"
+USER_UID="1001"
+LAUNCHER="spigot.jar"
+USERNAME="minecraft"
+SOCKET="/tmp/tmux-$USER_UID/$SERVICE"
+SOCKET_OPTION="-S"
+
+if [[ $(tmux $SOCKET_OPTION $SOCKET ls 2>&1 | grep -v "no server\|error connecting" | grep "$SERVICE") != "" ]]; then
+        STATUS="on"
+else
+        STATUS="off"
+fi
+
+if [[ $1 == start ]] ; then
+        if [[ $STATUS == "on" ]] ; then
+                echo "$SERVICE server is already running"
+        else
+#		if [[ ! -d "/tmp/tmux-$USER_UID" ]] ; then
+#			mkdir /tmp/tmux-$USER_UID/
+#			touch $SOCKET
+#			chown $SERVICE:$SERVICE /tmp/tmux-$USER_UID/ -R
+#		fi
+                /usr/bin/su-exec $USERNAME /bin/bash -c "cd $DIRECTORY &&  tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -Xmx12G -Xms12G -jar $DIRECTORY/$LAUNCHER nogui 2&>1"
+		if [[ -f "$SOCKET" ]] ; then
+	                echo "$SERVICE server has been started. Run '$SERVICE attach' to connect to the terminal"
+		fi
+        fi
+elif [[ $1 == stop ]] ; then
+        tmux $SOCKET_OPTION $SOCKET  capture-pane -pS -100000 > $DIRECTORY/logs/$(date +'backuplog_%m-%d-%y_%H-%M-%S').log
+      su-exec $USERNAME sh -c "tmux $SOCKET_OPTION $SOCKET send-keys -t $SERVICE 'stop'"
+elif [[ $1 == attach ]] ; then
+        if [[ $STATUS == "on" ]] ; then
+                /usr/bin/su-exec $USERNAME /bin/sh -c "tmux $SOCKET_OPTION $SOCKET attach-session -t $SERVICE"
+        else
+                echo "$SERVICE server is not running"
+        fi
+elif [[ $1 == update ]] || [[ $1 == install ]]; then
+        if [[ $STATUS == "on" ]] ; then
+                echo "$SERVICE server is currently running. Run '$SERVICE stop' to stop the server before running the update"
+        else
+		rm $DIRECTORY/spigot*.jar
+		rm $DIRECTORY/BuildTools.log.txt
+          	/usr/bin/su-exec $USERNAME /bin/bash -c "cd $DIRECTORY && tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -jar BuildTools.jar 2&>1" && minecraft attach
+		if [[ $(cat $DIRECTORY/BuildTools.log.txt | grep 'out of date') ]] ; then
+			wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar -O $DIRECTORY/BuildTools.jar
+			/usr/bin/su-exec $USERNAME /bin/bash -c "cd $DIRECTORY &&  tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -jar BuildTools.jar 2&>1" && minecraft attach
+		fi
+		ln -s $DIRECTORY/spigot-* $DIRECTORY/spigot.jar
+        fi
+elif [[ $1 == status ]] ; then
+	systemctl status $SERVICE --no-pager
+fi
