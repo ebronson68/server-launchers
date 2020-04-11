@@ -1,0 +1,21 @@
+[Unit]
+Description=server daemon for terraria
+
+Wants=network.target
+After=network.target
+
+[Service]
+Type=oneshot
+User=terraria
+ExecStartPre=/bin/mkdir /tmp/tmux-1003/ -p
+ExecStartPre=/bin/chown terraria:tmux -R /tmp/tmux-1003/
+ExecStartPre=/bin/chown terraria:tmux -R /home/terraria
+WorkingDirectory=/home/terraria
+ExecStart=/usr/bin/terraria start
+ExecStop=/usr/bin/terraria stop
+StandardOutput=syslog
+StandardError=syslog
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
