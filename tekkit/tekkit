@@ -1,0 +1,45 @@
+#!/bin/bash
+
+DIRECTORY="/home/minecraft/Tekkit"
+SERVICE="tekkit"
+USER_UID="1001"
+LAUNCHER="Tekkit.jar"
+ESCAPE=""
+EXIT="stop"
+USERNAME="minecraft"
+
+if [[ $2  ]] ; then
+	SOCKET="$2"
+	SOCKET_OPTION="-S"
+else
+	SOCKET="/tmp/tmux-$USER_UID/$SERVICE"
+	SOCKET_OPTION="-S"
+fi
+
+if [[ $(tmux $SOCKET_OPTION $SOCKET ls 2>&1 | grep -v "no server" | grep "$SERVICE") != "" ]] ; then
+	STATUS="on"
+else
+	STATUS="off"
+fi
+
+if [[ $1 == start ]] ; then
+	if [[ $STATUS == "on" ]] ; then
+		echo "$SERVICE server is already running"
+	else
+		echo "$SERVICE server has been started. Run '$SERVICE attach' to connect to the terminal"
+		/usr/bin/su-exec $USERNAME /bin/bash -c "cd $DIRECTORY && tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -Xmx12G -Xms12G -jar $DIRECTORY/$LAUNCHER nogui 2&>1"
+	fi
+elif [[ $1 == stop ]] ; then
+	tmux $SOCKET_OPTION $SOCKET capture-pane -pS -100000 > $DIRECTORY/logs/$(date +'backuplog_%m-%d-%y_%H-%M-%S').log
+	su-exec $USERNAME sh -c "tmux $SOCKET_OPTION $SOCKET send-keys -t $SERVICE 'stop'"
+elif [[ $1 == attach ]] ; then
+	if [[ $STATUS == "on" ]] ; then
+		/usr/bin/su-exec $USERNAME /bin/sh -c "tmux $SOCKET_OPTION $SOCKET attach-session -t $SERVICE"
+	else
+		echo "$SERVICE server is not running"	
+	fi
+elif [[ $1 == update ]] || [[ $1 == install ]] ; then
+	less $DIRECTORY/install.txt
+elif [[ $1 == status ]] ; then
+	systemctl status $SERVICE --no-pager
+fi
