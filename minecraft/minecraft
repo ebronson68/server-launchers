@@ -59,3 +59,4 @@ elif [[ $1 == status ]] ; then
 	systemctl status $SERVICE --no-pager
 fi
 
+# testing git
