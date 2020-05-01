@@ -31,7 +31,7 @@ if [[ $1 == start ]] ; then
         fi
 elif [[ $1 == stop ]] ; then
         tmux $SOCKET_OPTION $SOCKET capture-pane -pS -100000 > $DIRECTORY/logs/$(date +'backuplog_%m-%d-%y_%H-%M-%S').log
-        tmux $SOCKET_OPTION $SOCKET send-keys -t $SERVICE 'stop'
+        tmux $SOCKET_OPTION $SOCKET send-keys -t $SERVICE 'stop'
 elif [[ $1 == attach ]] ; then
         if [[ $STATUS == "on" ]] ; then
                 tmux $SOCKET_OPTION $SOCKET attach-session -t $SERVICE
