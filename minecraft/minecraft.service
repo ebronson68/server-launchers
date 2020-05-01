@@ -6,12 +6,9 @@ After=network.target
 
 [Service]
 Type=oneshot
-User=minecraft
-WorkingDirectory=/home/minecraft/
+WorkingDirectory=/root/minecraft/
 #Group=minecraft
-ExecStartPre=/bin/mkdir /tmp/tmux-1001/ -p
-ExecStartPre=/bin/chown minecraft:tmux -R /tmp/tmux-1001/
-ExecStartPre=/bin/chown minecraft:minecraft -R /home/minecraft/
+ExecStartPre=/bin/mkdir /tmp/tmux-0/ -p
 ExecStart=/usr/local/bin/minecraft start
 ExecStop=/usr/local/bin/minecraft stop
 StandardOutput=syslog
