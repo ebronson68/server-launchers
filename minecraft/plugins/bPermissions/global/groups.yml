@@ -1,0 +1,78 @@
+default: default
+groups:
+  owner:
+    permissions:
+    - bukkit.*
+    - discordsrv.*
+    - essentials.*
+    - minecraft.command.*
+    groups:
+    - staff
+  default:
+    permissions:
+    - discordsrv.player
+    - essentials.afk
+    - essentials.back
+    - essentials.balance.*
+    - essentials.balancetop
+    - essentials.compass
+    - essentials.delhome
+    - essentials.depth
+    - essentials.getpos
+    - essentials.help
+    - essentials.home
+    - essentials.itemdb
+    - essentials.kit
+    - essentials.msg
+    - essentials.pay
+    - essentials.ping
+    - essentials.rules
+    - essentials.seen
+    - essentials.sethome
+    - essentials.sethome.bed
+    - essentials.sethome.multiple
+    - essentials.showkit
+    - essentials.spawn
+    - essentials.tpa
+    - essentials.tpaccept
+    - essentials.tpahere
+    - essentials.tpdeny
+    - essentials.version
+    - essentials.whois
+    - minecraft.command.help
+    - minecraft.command.kill
+    - minecraft.command.list
+    - minecraft.command.me
+    - minecraft.command.msg
+    - minecraft.command.seed
+    groups: []
+  staff:
+    permissions:
+    - discordsrv.admin
+    - essentials.afk.kickexempt
+    - essentials.ban.*
+    - essentials.banip
+    - essentials.bigtree
+    - essentials.delwarp
+    - essentials.fly*
+    - essentials.invsee
+    - essentials.invsee.equip
+    - essentials.kick
+    - essentials.nick
+    - essentials.setwarp
+    - essentials.sleepingignored
+    - essentials.unban*
+    - lagg.*
+    - minecraft.command.ban
+    - minecraft.command.banip
+    - minecraft.command.banlist
+    - minecraft.command.kick
+    - minecraft.command.save-all
+    - minecraft.command.say
+    - minecraft.command.time
+    - minecraft.command.toggledownfall
+    - minecraft.command.tp
+    - minecraft.command.weather
+    - worldedit.*
+    groups:
+    - default
