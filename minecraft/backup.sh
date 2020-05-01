@@ -1,6 +1,7 @@
 #!/bin/bash
-declare -a worlds=(world world_nether world_the_end)
-backupdir=/home/minecraft/backups
+declare -a worlds=(castle castle_nether castle_the_end)
+backupdir=/root/minecraft/backups
+minecraft_directory=/root/minecraft
 ext=.zip
 
 GREEN='\033[0;32m'
@@ -22,7 +23,7 @@ numworlds=${#worlds[@]}
             mkdir $backupdir/daily/${worlds[$i]}
         fi
             # echo -e "${GREEN}[ START ] ${NC}Backing up the folder for '${worlds[$i]}' to '$backupdir/hourly/${worlds[$i]}/$hdateformat'."
-        zip -q $backupdir/hourly/${worlds[$i]}/$hdateformat -r /home/minecraft/${worlds[$i]}
+        zip -q $backupdir/hourly/${worlds[$i]}/$hdateformat -r $minecraft_directory/${worlds[$i]}
             # echo -e "${LIGHT_BLUE}[ COMPLETED ] ${NC}Backed up the folder for '${worlds[$i]}'." 
         if [ $(find $backupdir/daily/${worlds[$i]}/ -type f -mmin -1440 | wc -l) = 0 ]; then
             cp $backupdir/hourly/${worlds[$i]}/$hdateformat $backupdir/daily/${worlds[$i]}/
@@ -33,7 +34,7 @@ numworlds=${#worlds[@]}
     done
 
     # echo -e "${GREEN}[ START ] ${NC}Backing up the folder for 'plugins' to '$backupdir/hourly/plugins/$hdateformat'."
-    zip -q $backupdir/hourly/plugins/$hdateformat -r /home/minecraft/plugins
+    zip -q $backupdir/hourly/plugins/$hdateformat -r $minecraft_directory/plugins
     # echo -e "${LIGHT_BLUE}[ COMPLETED ] ${NC}Backed up the folder for 'plugins'."
     if [ $(find $backupdir/daily/plugins/ -type f -mmin -1440 | wc -l) = 0 ]; then
         cp $backupdir/hourly/plugins/$hdateformat $backupdir/daily/plugins/
@@ -45,6 +46,6 @@ numworlds=${#worlds[@]}
     # echo -e "${LIGHT_BLUE} [ BACKUP ] ${NC}Backup of the worlds complete."
     find $backupdir/hourly -type f -mmin +1440 -exec rm {} \;
     find $backupdir/daily -type f -mtime +14 -exec rm {} \;
-    find /home/minecraft/logs -type f -mtime +14 -exec rm {} \;
+    find $minecraft_directory/logs -type f -mtime +14 -exec rm {} \;
     # echo -e "${LIGHT_BLUE} [ BACKUP ] ${NC}Removed old backups." 
 exit 0
