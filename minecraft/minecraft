@@ -58,5 +58,3 @@ elif [[ $1 == update ]] || [[ $1 == install ]]; then
 elif [[ $1 == status ]] ; then
 	systemctl status $SERVICE --no-pager
 fi
-
-# testing git
