@@ -21,7 +21,7 @@ if [[ $1 == start ]] ; then
         if [[ $STATUS == "on" ]] ; then
                 echo "$SERVICE server is already running"
         else
-                cd $DIRECTORY &&  tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -Xmx12G -Xms12G -jar $DIRECTORY/$LAUNCHER nogui 2&>1
+                cd $DIRECTORY &&  tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -Xmx6G -Xms6G -jar $DIRECTORY/$LAUNCHER nogui 2&>1
 		echo SOCKET=$SOCKET
 		if [[ -a "$SOCKET" ]] ; then
 	                echo "$SERVICE server has been started. Run '$SERVICE attach' to connect to the terminal"
@@ -31,7 +31,7 @@ if [[ $1 == start ]] ; then
         fi
 elif [[ $1 == stop ]] ; then
         tmux $SOCKET_OPTION $SOCKET capture-pane -pS -100000 > $DIRECTORY/logs/$(date +'backuplog_%m-%d-%y_%H-%M-%S').log
-        tmux $SOCKET_OPTION $SOCKET send-keys -t $SERVICE 'stop'
+'       tmux $SOCKET_OPTION $SOCKET send-keys -t $SERVICE 'stop
 elif [[ $1 == attach ]] ; then
         if [[ $STATUS == "on" ]] ; then
                 tmux $SOCKET_OPTION $SOCKET attach-session -t $SERVICE
@@ -44,16 +44,13 @@ elif [[ $1 == update ]] || [[ $1 == install ]]; then
         else
 		rm $DIRECTORY/spigot*.jar
 		rm $DIRECTORY/BuildTools.log.txt
-          	cd $DIRECTORY && tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -jar BuildTools.jar 2&>1 && minecraft attach
-		if [[ $(cat $DIRECTORY/BuildTools.log.txt | grep 'out of date') ]] ; then
-			wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar -O $DIRECTORY/BuildTools.jar
-			cd $DIRECTORY &&  tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -jar BuildTools.jar 2&>1 && minecraft attach
-		fi
-		if [[ -a $DIRECTORY/spigot-* ]] ; then
-			ln -s $DIRECTORY/spigot-* $DIRECTORY/spigot.jar
+          	cd $DIRECTORY && tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -jar $DIRECTORY/BuildTools.jar 2&>1 && minecraft attach
+		wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar -O $DIRECTORY/BuildTools.jar
+		cd $DIRECTORY &&  tmux $SOCKET_OPTION $SOCKET new-session -d -s $SERVICE -n $SERVICE java -jar $DIRECTORY/BuildTools.jar 2&>1 && minecraft attach
+		if [[ -f $DIRECTORY/spigot-*.jar ]] ; then
+			ln -s $DIRECTORY/spigot-*.jar $DIRECTORY/spigot.jar
 		fi
         fi
 elif [[ $1 == status ]] ; then
 	systemctl status $SERVICE --no-pager
 fi
-
