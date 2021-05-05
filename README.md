@@ -18,4 +18,5 @@ wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifac
 minecraft install
 su-exec minecraft /bin/bash -c "cd /home/minecraft && tmux -S /tmp/tmux-997/minecraft session -d -s minecraft -n minecraft java -jar BuildTools.jar"
 minecraft attach
+vim eula.txt
 ```
