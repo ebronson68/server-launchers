@@ -1,6 +1,8 @@
-# servers
+# server-launchers
 
-linux server files
+Launchers and services for Linux-based game servers
+
+
 
 ```
 apt update -y && apt full-upgrade -y
